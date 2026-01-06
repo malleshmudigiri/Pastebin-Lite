@@ -42,19 +42,3 @@ app.get("/p/:id", async (req, res) => {
 
 
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-
-
-
-(async () => {
-  try {
-    await redis.ping();
-    console.log("Redis connected");
-  } catch (e) {
-    console.error(" Redis failed", e);
-  }
-})();
