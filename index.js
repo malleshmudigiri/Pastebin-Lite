@@ -1,12 +1,13 @@
 import cors from "cors";
 import express from "express";
-import healthRoute from "../routes/health.js";
-import pasteRoutes from "../routes/pastes.js";
-import { getNow } from "../utils/time.js";
-import redis from "../utils/redis.js";
-import dotenv from "dotenv";
+import healthRoute from "./routes/health.js";
+import pasteRoutes from "./routes/pastes.js";
+import { getNow } from "./utils/time.js";
+import redis from "./utils/redis.js";
 
+import dotenv from "dotenv";
 dotenv.config();
+
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use("/api", pasteRoutes);
 app.get("/", (req, res) => {
   res.send("Pastebin Lite API running");
 });
+
+
 
 app.get("/p/:id", async (req, res) => {
   const raw = await redis.get(`paste:${req.params.id}`);
@@ -38,6 +41,20 @@ app.get("/p/:id", async (req, res) => {
 });
 
 
-export default function handler(req, res) {
-  return app(req, res);
-}
+
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+
+
+(async () => {
+  try {
+    await redis.ping();
+    console.log("Redis connected");
+  } catch (e) {
+    console.error(" Redis failed", e);
+  }
+})();
